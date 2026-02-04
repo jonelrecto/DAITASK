@@ -1,0 +1,22 @@
+{
+  "name": "task-management-app",
+  "private": true,
+  "workspaces": [
+    "apps/backend",
+    "apps/frontend"
+  ],
+  "scripts": {
+    "dev:backend": "npm run dev --workspace=apps/backend",
+    "dev:frontend": "npm run dev --workspace=apps/frontend",
+    "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
+    "install:all": "npm install",
+    "migrate": "npm run migrate --workspace=apps/backend",
+    "seed": "npm run seed --workspace=apps/backend",
+    "test": "npm run test --workspace=apps/backend",
+    "test:frontend": "npm run test --workspace=apps/frontend",
+    "test:all": "npm run test --workspace=apps/backend && npm run test --workspace=apps/frontend"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}
