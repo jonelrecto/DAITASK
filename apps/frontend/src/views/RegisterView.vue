@@ -1,7 +1,8 @@
 <template>
-  <div class="flex min-h-screen items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
-    <Card class="w-full max-w-md">
-      <h1 class="mb-6 text-center text-2xl font-bold text-gray-800">Task Manager</h1>
+  <div class="flex min-h-screen items-center justify-center bg-gray-100 p-4">
+    <div class="w-full max-w-md rounded-xl border border-gray-200 bg-white p-8 shadow-sm">
+      <h1 class="mb-2 text-center text-2xl font-bold text-gray-800">Sign Up</h1>
+      <p class="mb-6 text-center text-sm text-gray-500">Create your Task Manager account</p>
       <form @submit.prevent="handleSubmit">
         <FormInput
           v-model="email"
@@ -28,13 +29,13 @@
           required
         />
         <p v-if="authStore.authError" class="mb-4 text-sm text-red-500">{{ authStore.authError }}</p>
-        <Button type="submit" :loading="authStore.isLoading" full-width>Register</Button>
+        <Button type="submit" :loading="authStore.isLoading" full-width>Create account</Button>
       </form>
-      <p class="mt-4 text-center text-sm text-gray-600">
+      <p class="mt-6 text-center text-sm text-gray-600">
         Already have an account?
-        <router-link to="/login" class="font-medium text-blue-600 hover:underline">Log in</router-link>
+        <router-link to="/login" class="font-medium text-slate-700 hover:text-slate-900 hover:underline">Sign In</router-link>
       </p>
-    </Card>
+    </div>
   </div>
 </template>
 
@@ -42,7 +43,6 @@
 import { ref, reactive } from 'vue';
 import { useRouter } from 'vue-router';
 import { useAuthStore } from '@/stores/auth';
-import Card from '@/components/common/Card.vue';
 import FormInput from '@/components/common/FormInput.vue';
 import Button from '@/components/common/Button.vue';
 

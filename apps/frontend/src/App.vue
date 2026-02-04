@@ -1,16 +1,14 @@
 <template>
   <div id="app" class="min-h-screen bg-gray-50">
-    <AppHeader v-if="authStore.isAuthenticated" />
-    <main>
-      <router-view />
-    </main>
+    <AdminLayout v-if="authStore.isAuthenticated" />
+    <router-view v-else />
     <ToastNotification />
   </div>
 </template>
 
 <script setup lang="ts">
 import { useAuthStore } from '@/stores/auth';
-import AppHeader from '@/components/AppHeader.vue';
+import AdminLayout from '@/components/layout/AdminLayout.vue';
 import ToastNotification from '@/components/common/ToastNotification.vue';
 
 const authStore = useAuthStore();

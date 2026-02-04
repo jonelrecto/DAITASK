@@ -6,7 +6,6 @@ import type { DashboardStats } from '../types/analytics.types';
 
 export async function getDashboardStats(req: Request, res: Response): Promise<void> {
   const userId = req.user!.id;
-
   const [totalResult] = await db
     .select({ count: count() })
     .from(tasks)

@@ -2,7 +2,9 @@
 export default {
   content: ['./index.html', './src/**/*.{vue,js,ts,jsx,tsx}'],
   theme: {
-    extend: {},
+    extend: {
+      width: { sidebar: '16rem' },
+    },
   },
   plugins: [],
 };

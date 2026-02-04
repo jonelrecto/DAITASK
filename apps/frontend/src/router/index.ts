@@ -49,6 +49,7 @@ const router = createRouter({
 router.beforeEach((to) => {
   const authStore = useAuthStore();
   const isAuthenticated = authStore.isAuthenticated;
+
   console.log('to', to);
   console.log('isAuthenticated', isAuthenticated);
 
