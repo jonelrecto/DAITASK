@@ -10,17 +10,12 @@ export interface Toast {
 
 const toasts = ref<Toast[]>([]);
 let nextId = 0;
-let timeoutId: ReturnType<typeof setTimeout> | null = null;
 
 export function useToast() {
   function show(message: string, type: ToastType = 'success') {
     const id = nextId++;
     toasts.value = [...toasts.value, { id, message, type }];
-    if (timeoutId) clearTimeout(timeoutId);
-    timeoutId = setTimeout(() => {
-      remove(id);
-      timeoutId = null;
-    }, 3000);
+    setTimeout(() => remove(id), 3000);
   }
 
   function remove(id: number) {

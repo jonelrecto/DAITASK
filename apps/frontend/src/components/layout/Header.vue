@@ -38,6 +38,7 @@
           {{ authStore.currentUser?.email }}
         </div>
         <button
+          ref="signOutButtonRef"
           type="button"
           class="w-full px-3 py-2 text-left text-sm text-gray-700 hover:bg-gray-50"
           role="menuitem"
@@ -57,7 +58,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue';
+import { ref, computed, watch, onUnmounted } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { useAuthStore } from '@/stores/auth';
 import { useToast } from '@/composables/useToast';
@@ -71,6 +72,24 @@ const route = useRoute();
 const authStore = useAuthStore();
 const { show } = useToast();
 const showDropdown = ref(false);
+const signOutButtonRef = ref<HTMLButtonElement | null>(null);
+
+function onKeydown(e: KeyboardEvent) {
+  if (e.key === 'Escape') showDropdown.value = false;
+}
+
+watch(showDropdown, (open) => {
+  if (open) {
+    document.addEventListener('keydown', onKeydown);
+    setTimeout(() => signOutButtonRef.value?.focus(), 0);
+  } else {
+    document.removeEventListener('keydown', onKeydown);
+  }
+});
+
+onUnmounted(() => {
+  document.removeEventListener('keydown', onKeydown);
+});
 
 const pageTitle = computed(() => {
   const name = route.name as string;

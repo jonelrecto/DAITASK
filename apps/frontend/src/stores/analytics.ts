@@ -22,6 +22,7 @@ export const useAnalyticsStore = defineStore('analytics', {
       } catch (err: unknown) {
         const e = err as { response?: { data?: { message?: string } } };
         this.error = e.response?.data?.message ?? 'Failed to load analytics';
+        throw err;
       } finally {
         this.loading = false;
       }

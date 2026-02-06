@@ -215,7 +215,7 @@ npm run test:watch
 
 - Password hashing with bcrypt
 - Session-based auth with HTTP-only cookies
-- CORS and rate limiting
+- CORS
 - Input validation (express-validator)
 - SQL injection prevention via Drizzle ORM
 

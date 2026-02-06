@@ -27,6 +27,7 @@ export const useTaskStore = defineStore('task', {
       } catch (err: unknown) {
         const e = err as { response?: { data?: { message?: string } } };
         this.error = e.response?.data?.message ?? 'Failed to load tasks';
+        throw err;
       } finally {
         this.loading = false;
       }

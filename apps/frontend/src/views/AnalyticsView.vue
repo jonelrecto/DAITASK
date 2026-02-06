@@ -4,10 +4,18 @@
       <h1 class="text-2xl font-bold text-gray-800">Analytics Dashboard</h1>
       <Button :loading="analyticsStore.loading" @click="refreshStats">Refresh</Button>
     </div>
-    <p v-if="lastRefreshed" class="mb-4 text-sm text-gray-500">Last updated: {{ lastRefreshed }}</p>
-    <div v-if="analyticsStore.loading && !analyticsStore.stats" class="flex justify-center py-12">
-      <span class="h-8 w-8 animate-spin rounded-full border-2 border-blue-600 border-t-transparent" />
+    <p v-if="lastRefreshed && !analyticsStore.loading" class="mb-4 text-sm text-gray-500">Last updated: {{ lastRefreshed }}</p>
+    <p v-if="analyticsStore.loading && !analyticsStore.stats" class="mb-4 text-sm text-gray-500">Loading...</p>
+    <div v-if="analyticsStore.loading && !analyticsStore.stats" class="space-y-8">
+      <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <div v-for="i in 7" :key="i" class="h-24 animate-pulse rounded-card border border-gray-200 bg-gray-50" />
+      </div>
+      <div class="grid gap-6 lg:grid-cols-2">
+        <div class="h-64 animate-pulse rounded-card border border-gray-200 bg-gray-50" />
+        <div class="h-64 animate-pulse rounded-card border border-gray-200 bg-gray-50" />
+      </div>
     </div>
+    <p v-else-if="analyticsStore.error && !analyticsStore.loading" class="mb-4 text-sm text-red-600">{{ analyticsStore.error }}</p>
     <template v-else-if="analyticsStore.stats">
       <div class="mb-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <StatCard title="Total Tasks" :value="analyticsStore.stats.totalTasks" color="blue" />
@@ -27,7 +35,7 @@
         <PriorityChart :data="analyticsStore.stats.byPriority" />
       </div>
     </template>
-    <p v-else class="text-gray-600">No data yet. Create tasks to see analytics.</p>
+    <p v-else-if="!analyticsStore.stats && !analyticsStore.error" class="text-gray-600">No data yet. Create tasks to see analytics.</p>
   </div>
 </template>
 
@@ -44,14 +52,22 @@ const analyticsStore = useAnalyticsStore();
 const { show } = useToast();
 const lastRefreshed = ref<string | null>(null);
 
-onMounted(() => {
-  analyticsStore.fetchStats();
-  lastRefreshed.value = new Date().toLocaleString();
+onMounted(async () => {
+  try {
+    await analyticsStore.fetchStats();
+    lastRefreshed.value = new Date().toLocaleString();
+  } catch {
+    show(analyticsStore.error ?? 'Failed to load analytics', 'error');
+  }
 });
 
 async function refreshStats() {
-  await analyticsStore.fetchStats();
-  lastRefreshed.value = new Date().toLocaleString();
-  show('Analytics updated');
+  try {
+    await analyticsStore.fetchStats();
+    lastRefreshed.value = new Date().toLocaleString();
+    show('Analytics updated');
+  } catch {
+    show(analyticsStore.error ?? 'Failed to load analytics', 'error');
+  }
 }
 </script>

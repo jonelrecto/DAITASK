@@ -2,7 +2,17 @@
   <div class="p-6">
     <div class="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
       <h1 class="text-2xl font-bold text-gray-800">My Tasks</h1>
-      <Button @click="openCreateForm">Create Task</Button>
+      <div class="flex flex-col gap-1 sm:flex-row sm:items-center sm:gap-3">
+        <p class="text-sm text-gray-500">Press <kbd class="rounded border border-gray-300 bg-gray-100 px-1.5 py-0.5 font-mono text-xs">Ctrl+K</kbd> to add a task</p>
+        <Button @click="openCreateForm">
+      <template #icon>
+        <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+        </svg>
+      </template>
+      Create Task
+    </Button>
+      </div>
     </div>
     <div class="mb-4">
       <TaskFilters :current-filters="taskStore.filters" @filter-change="handleFilterChange" />
@@ -31,7 +41,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, onUnmounted } from 'vue';
 import { useTaskStore } from '@/stores/task';
 import { useToast } from '@/composables/useToast';
 import type { Task, CreateTaskData } from '@/types/task.types';
@@ -49,8 +59,24 @@ const taskToEdit = ref<Task | null>(null);
 const showDeleteConfirm = ref(false);
 const taskToDelete = ref<Task | null>(null);
 
-onMounted(() => {
-  taskStore.fetchTasks();
+function onGlobalKeydown(e: KeyboardEvent) {
+  if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+    e.preventDefault();
+    if (!showTaskForm.value) openCreateForm();
+  }
+}
+
+onMounted(async () => {
+  document.addEventListener('keydown', onGlobalKeydown);
+  try {
+    await taskStore.fetchTasks();
+  } catch {
+    show(taskStore.error ?? 'Failed to load tasks', 'error');
+  }
+});
+
+onUnmounted(() => {
+  document.removeEventListener('keydown', onGlobalKeydown);
 });
 
 function openCreateForm() {
@@ -100,7 +126,11 @@ async function handleDeleteConfirm() {
   taskToDelete.value = null;
 }
 
-function handleFilterChange(filters: { status: string; priority: string }) {
-  taskStore.setFilters(filters);
+async function handleFilterChange(filters: { status: string; priority: string }) {
+  try {
+    await taskStore.setFilters(filters);
+  } catch {
+    show(taskStore.error ?? 'Failed to load tasks', 'error');
+  }
 }
 </script>
